@@ -1,0 +1,17 @@
+services:
+    bqueuebundle.job_manager:
+        class: Strnoar\BQueueBundle\Jobs\JobManager
+        arguments:
+            ["@logger", %strnoar_b_queue%]
+
+    bqueuebundle.queue_listen_command:
+        class: Strnoar\BQueueBundle\Command\QueueListenCommand
+        calls:
+            - [setContainer, ["@service_container"]]
+            - [setParameters, [%strnoar_b_queue%]]
+
+
+    test.testjob:
+        class: Strnoar\BQueueBundle\Services\TestService
+        calls:
+            - [setLogger, ["@logger"]]

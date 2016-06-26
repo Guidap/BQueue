@@ -1,0 +1,19 @@
+{
+    "name": "strnoar/bqueuebundle",
+    "type": "symfony-bundle",
+    "description": "Symfony BQueueBundle",
+    "keywords": ["queue beanstalkd pheanstalk"],
+    "homepage": "http://github.com/ArnaudTarroux",
+    "require": {
+        "symfony/symfony": ">=2.8.*",
+        "pda/pheanstalk": "^3.1",
+        "doctrine/doctrine-bundle": "*"
+    },
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Strnoar",
+            "email": "tar.arnaud@gmail.com"
+        }
+    ]
+}
