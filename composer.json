@@ -10,6 +10,9 @@
         "doctrine/doctrine-bundle": "*"
     },
     "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": { "Strnoar\\BQueueBundle\\": "" }
+    },
     "authors": [
         {
             "name": "Strnoar",
