@@ -2,7 +2,7 @@
     "name": "strnoar/bqueuebundle",
     "type": "symfony-bundle",
     "description": "Symfony BQueueBundle",
-    "keywords": ["queue beanstalkd pheanstalk"],
+    "keywords": ["queue", "beanstalkd", "pheanstalk"],
     "homepage": "http://github.com/ArnaudTarroux",
     "require": {
         "symfony/symfony": ">=2.8",
