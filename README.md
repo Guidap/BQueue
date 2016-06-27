@@ -27,24 +27,55 @@ strnoar_b_queue:
 
 #### Use
 
+Create a Worker, this class must exetends 'Strnoar\BQueueBundle\Jobs\Jobs':
+
+```sh
+// MyBundle/Workers/ExampleWorker.php
+
+<?php
+
+namespace MyBundle\Workers;
+
+use Strnoar\BQueueBundle\Jobs\Jobs;
+
+class ExampleWorker extends Jobs
+{
+    /**
+     * @return mixed
+     */
+    public function handle()
+    {
+        // Do some stuff
+    }
+}
+```
+
+Now, just declare this one as service:
+
+```sh
+// MyBundle/Resources/config/services.yml
+
+my_bundle.exemple_worker:
+    class: BlogBundle\Workers\TestWorker
+```
+
 You can access to the worker manager by the container with the id: 'bqueuebundle.job_manager'.
 
 Here the dispatcher:
 
-
 ```sh
 $this->get('bqueuebundle.job_manager')
             ->dispatch(
-                $this->get('my_bundle.my_worker_service')->build()
+                $this->get('my_bundle.exemple_worker')->build()
             );
 ```
 
 if you need to inject dependencies in your worker you can use a method who return the worker instance ($this):
 
 ```sh
-// MyBundle/Workers/MyWorker.php
+// MyBundle/Workers/ExampleWorker.php
 
-public function setDependencies(Swift_Mailer $mailer)
+public function setDependencies(\Swift_Mailer $mailer)
 {
     $this->mailer = $mailer;
 
@@ -52,12 +83,12 @@ public function setDependencies(Swift_Mailer $mailer)
 }
 ```
 
-And the dispatcher:
+And the dispatcher Or inject by the service declaration and use 'calls':
 
 ```sh
 $this->get('bqueuebundle.job_manager')
             ->dispatch(
-                $this->get('my_bundle.my_worker_service')->setDependencies($this->get('mailer'))->build()
+                $this->get('my_bundle.exemple_worker')->setDependencies($this->get('mailer'))->build()
             );
 ```
 
