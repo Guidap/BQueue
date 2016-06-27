@@ -4,7 +4,6 @@ namespace Strnoar\BQueueBundle\Jobs;
 
 use Pheanstalk\Pheanstalk;
 use Symfony\Bridge\Monolog\Logger;
-use Symfony\Component\Serializer\Serializer;
 
 class JobManager
 {
