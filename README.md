@@ -27,7 +27,10 @@ strnoar_b_queue:
 
 #### Use
 
-You can access to the worker manager by the container with the id: 'bqueuebundle.job_manager':
+You can access to the worker manager by the container with the id: 'bqueuebundle.job_manager'.
+
+Here the dispatcher:
+
 
 ```sh
 $this->get('bqueuebundle.job_manager')
@@ -68,6 +71,9 @@ You can also specify the tube and the tries:
 ```sh
 $ php bin/console worker:listen --tube=tube1 --tries=3
 ```
+
+You can use supervisord to control the process and automatise the worker:listen command execution
+
 
 ##### TODO:
 
