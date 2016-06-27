@@ -56,7 +56,7 @@ Now, just declare this one as service:
 // MyBundle/Resources/config/services.yml
 
 my_bundle.exemple_worker:
-    class: BlogBundle\Workers\TestWorker
+    class: MyBundle\Workers\ExampleWorker
 ```
 
 You can access to the worker manager by the container with the id: 'bqueuebundle.job_manager'.
