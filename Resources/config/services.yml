@@ -3,6 +3,8 @@ services:
         class: Strnoar\BQueueBundle\Jobs\JobManager
         arguments:
             ["@logger", "%strnoar_b_queue%"]
+        calls:
+            - [setContainer, ["@service_container"]]
 
     bqueuebundle.queue_listen_command:
         class: Strnoar\BQueueBundle\Command\QueueListenCommand

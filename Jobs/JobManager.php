@@ -4,21 +4,24 @@ namespace Strnoar\BQueueBundle\Jobs;
 
 use Pheanstalk\Pheanstalk;
 use Symfony\Bridge\Monolog\Logger;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class JobManager
+class JobManager extends Manager
 {
+    use ContainerAwareTrait;
+
     /**
      * @var Pheanstalk
      */
-    private $pheanstalk;
+    protected $pheanstalk;
     /**
      * @var Logger
      */
-    private $logger;
+    protected $logger;
     /**
      * @var int
      */
-    private $count = 1;
+    protected $count = 1;
 
     /**
      * JobManager constructor.
@@ -34,13 +37,13 @@ class JobManager
 
 
     /**
-     * @param Jobs $command
-     * @param string $tube
+     * @param array $payload
+     * @param null $tube
      * @return int
      */
-    public function dispatch(Jobs $command, $tube = null)
+    public function dispatch(Array $payload, $tube = null)
     {
-        $serialized = serialize($command);
+        $serialized = serialize($payload);
         $tube = is_null($tube) ? $this->parameters['default'] : $tube;
 
         return $this->pheanstalk->useTube($tube)->put($serialized);
@@ -64,13 +67,16 @@ class JobManager
             return;
         }
 
-        $command = unserialize($job->getData());
+        $payload = unserialize($job->getData());
 
-        if ($command instanceof Jobs && method_exists($command, 'handle') && is_callable([$command, 'handle'])) {
+        if ($this->validate($payload)) {
 
             try {
 
-                call_user_func([$command, 'handle']);
+                call_user_func(
+                    [$this->container->get($payload['service']), 'handle'],
+                    $payload['parameters']
+                );
 
             } catch(\Exception $e) {
 
@@ -81,28 +87,6 @@ class JobManager
             return $this->pheanstalk->delete($job);
         }
 
-        throw new \Exception('You cannot execute a non Jobs abstact class');
-    }
-
-    /**
-     * @param $tube
-     * @param $tries
-     * @param $index
-     * @param $timeout
-     * @param $job
-     * @param $e
-     * @return bool|null
-     * @throws \Exception
-     */
-    protected function tries($tube, $tries, $index, $timeout, $job, $e = null)
-    {
-        while ($this->count <= $tries) {
-            $this->execute($tube, $tries, $index, $timeout);
-            $this->count++;
-        }
-
-        $this->pheanstalk->delete($job);
-
-        return $this->logger->alert($e->getMessage());
+        throw new \Exception('The payload value is not valid, please verify the service and the parameters');
     }
 }

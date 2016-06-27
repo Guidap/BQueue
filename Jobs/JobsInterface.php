@@ -14,5 +14,5 @@ interface JobsInterface
     /**
      * @return mixed
      */
-    public function handle();
+    public function handle(Array $parameters);
 }
