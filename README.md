@@ -38,13 +38,17 @@ namespace MyBundle\Workers;
 
 use Strnoar\BQueueBundle\Jobs\Jobs;
 
-class ExampleWorker extends Jobs
+class ExampleWorker implements JobsInterface
 {
+    private $myKey;
+    
     /**
      * @return mixed
      */
-    public function handle()
+    public function handle(Array $parameters)
     {
+        // Access to the data you will pass to the parameters array value 
+        // when you dispatch the worker on queue
         // Do some stuff
     }
 }
@@ -66,7 +70,12 @@ Here the dispatcher:
 ```sh
 $this->get('bqueuebundle.job_manager')
             ->dispatch(
-                $this->get('my_bundle.exemple_worker')->build()
+                [
+                    // service is your worker service delaraction ID 
+                    'service' => 'my_bundle.exemple_worker',
+                    // parameters must be an array, you can pass some value in this one
+                    'parameters' => ['my_key' => 'my_value']
+                ]
             );
 ```
 
@@ -83,14 +92,7 @@ public function setDependencies(\Swift_Mailer $mailer)
 }
 ```
 
-And the dispatcher Or inject by the service declaration and use 'calls':
-
-```sh
-$this->get('bqueuebundle.job_manager')
-            ->dispatch(
-                $this->get('my_bundle.exemple_worker')->setDependencies($this->get('mailer'))->build()
-            );
-```
+Inject by the service declaration and use 'calls':
 
 Now you just have to execute the worker:listen command to execute the queued worker:
 
