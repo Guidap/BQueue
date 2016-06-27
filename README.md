@@ -39,9 +39,7 @@ namespace MyBundle\Workers;
 use Strnoar\BQueueBundle\Jobs\Jobs;
 
 class ExampleWorker implements JobsInterface
-{
-    private $myKey;
-    
+{   
     /**
      * @return mixed
      */
@@ -79,7 +77,7 @@ $this->get('bqueuebundle.job_manager')
             );
 ```
 
-if you need to inject dependencies in your worker you can use a method who return the worker instance ($this):
+if you need to inject dependencies in your worker you can use a method and use 'calls' in the service declaration:
 
 ```sh
 // MyBundle/Workers/ExampleWorker.php
@@ -92,9 +90,8 @@ public function setDependencies(\Swift_Mailer $mailer)
 }
 ```
 
-Inject by the service declaration and use 'calls':
 
-Now you just have to execute the worker:listen command to execute the queued worker:
+Now you just have to execute the worker:listen command to execute the queued workers:
 
 ```sh
 $ php bin/console worker:listen
@@ -106,7 +103,7 @@ You can also specify the tube and the tries:
 $ php bin/console worker:listen --tube=tube1 --tries=3
 ```
 
-You can use supervisord to control the process and automatise the worker:listen command execution
+I recommend to use supervisord to control the process and automatise the worker:listen command execution
 
 
 ##### TODO:
