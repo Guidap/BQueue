@@ -34,8 +34,9 @@ Here the dispatcher:
 
 ```sh
 $this->get('bqueuebundle.job_manager')
-            ->dispatch($this->get('my_bundle.my_worker_service')
-            ->build());
+            ->dispatch(
+                $this->get('my_bundle.my_worker_service')->build()
+            );
 ```
 
 if you need to inject dependencies in your worker you can use a method who return the worker instance ($this):
@@ -55,9 +56,9 @@ And the dispatcher:
 
 ```sh
 $this->get('bqueuebundle.job_manager')
-            ->dispatch($this->get('my_bundle.my_worker_service')
-            ->setDependencies($this->get('mailer'))
-            ->build());
+            ->dispatch(
+                $this->get('my_bundle.my_worker_service')->setDependencies($this->get('mailer'))->build()
+            );
 ```
 
 Now you just have to execute the worker:listen command to execute the queued worker:
