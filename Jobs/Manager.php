@@ -5,14 +5,26 @@ namespace Strnoar\BQueueBundle\Jobs;
 abstract class Manager
 {
     /**
+     * @var Pheanstalk
+     */
+    protected $pheanstalk;
+    /**
+     * @var bool
+     */
+    protected $isBeanstald;
+    /**
+     * @var array
+     */
+    protected $parameters;
+
+    /**
      * @param array $payload
      * @return bool
      * @throws \Exception
      */
     protected function validate(Array $payload)
     {
-        if (!array_key_exists('service', $payload) && !is_array($payload['parameters'])) {
-
+        if (!array_key_exists('service', $payload) && !is_array($payload)) {
             return false;
         }
 
@@ -40,5 +52,13 @@ abstract class Manager
         $this->pheanstalk->delete($job);
 
         return $this->logger->alert($e->getMessage());
+    }
+
+    protected function init()
+    {
+        $this->isBeanstald = ($this->parameters['adapter'] == 'beanstalkd');
+        if ($this->isBeanstald) {
+            $this->pheanstalk = new Pheanstalk($this->parameters['host'], $this->parameters['port']);
+        }
     }
 }

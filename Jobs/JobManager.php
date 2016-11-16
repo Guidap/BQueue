@@ -11,10 +11,6 @@ class JobManager extends Manager
     use ContainerAwareTrait;
 
     /**
-     * @var Pheanstalk
-     */
-    protected $pheanstalk;
-    /**
      * @var Logger
      */
     protected $logger;
@@ -31,8 +27,8 @@ class JobManager extends Manager
     public function __construct(Logger $logger, $parameters)
     {
         $this->parameters = $parameters;
-        $this->pheanstalk = new Pheanstalk($parameters['host'], $parameters['port']);
         $this->logger = $logger;
+        $this->init();
     }
 
 
@@ -44,10 +40,14 @@ class JobManager extends Manager
      */
     public function dispatch($service, Array $payload, $tube = null)
     {
-        $serialized = serialize(array_merge(['service' => $service], $payload));
-        $tube = is_null($tube) ? $this->parameters['default'] : $tube;
+        if ($this->isBeanstald) {
+            $serialized = serialize(['service' => $service, 'parameters' => $payload]);
+            $tube = is_null($tube) ? $this->parameters['default'] : $tube;
 
-        return $this->pheanstalk->useTube($tube)->put($serialized);
+            return $this->pheanstalk->useTube($tube)->put($serialized);
+        }
+
+        return $this->sync($service, $payload);
     }
 
 
@@ -84,5 +84,19 @@ class JobManager extends Manager
         }
 
         throw new \Exception('The payload value is not valid, please verify the service and the parameters');
+    }
+
+    /**
+     * @param $service
+     * @param array $payload
+     */
+    protected function sync($service, array $payload)
+    {
+        if ($this->container->has($service)) {
+            call_user_func(
+                [$this->container->get($service), 'handle'],
+                $payload
+            );
+        }
     }
 }

@@ -21,9 +21,10 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('strnoar_b_queue');
 
         $rootNode->children()
-                    ->scalarNode('host')->cannotBeEmpty()->end()
+                    ->scalarNode('host')->defaultValue('127.0.0.1')->end()
                     ->integerNode('port')->defaultValue(11300)->end()
                     ->scalarNode('default')->defaultValue('default')->end()
+                    ->enum('adapter')->values(['sync', 'beanstalkd'])->defaultValue('sync')->end()
                     ->integerNode('tries')->defaultValue(1)->end();
 
         // Here you should define the parameters that are allowed to

@@ -19,6 +19,7 @@ new Strnoar\BQueueBundle\StrnoarBQueueBundle(),
 Add the following lines to your config.yml:
 ```sh
 strnoar_b_queue:
+    adapter: beanstalkd # the value must be "sync" or "beanstalkd" (default: sync)
     host: 127.0.0.1
     port: 11300
     default: default    # the default tube name
@@ -70,8 +71,8 @@ $this->get('bqueuebundle.job_manager')
             ->dispatch(
             // service is your worker service delaraction ID
             'my_bundle.exemple_worker'
-                    // parameters must be an array, you can pass some value in this one
-                [ 'parameters' => ['my_key' => 'my_value']]
+            // parameters must be an array, you can pass some value in this one
+            ['my_key' => 'my_value']
             );
 ```
 
