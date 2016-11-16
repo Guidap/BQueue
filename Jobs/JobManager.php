@@ -37,13 +37,14 @@ class JobManager extends Manager
 
 
     /**
+     * @param $service
      * @param array $payload
      * @param null $tube
      * @return int
      */
-    public function dispatch(Array $payload, $tube = null)
+    public function dispatch($service, Array $payload, $tube = null)
     {
-        $serialized = serialize($payload);
+        $serialized = serialize(array_merge(['service' => $service], $payload));
         $tube = is_null($tube) ? $this->parameters['default'] : $tube;
 
         return $this->pheanstalk->useTube($tube)->put($serialized);
@@ -70,18 +71,13 @@ class JobManager extends Manager
         $payload = unserialize($job->getData());
 
         if ($this->validate($payload)) {
-
             try {
-
                 call_user_func(
                     [$this->container->get($payload['service']), 'handle'],
                     $payload['parameters']
                 );
-
             } catch(\Exception $e) {
-
                 return $this->tries($tube, $tries, $index, $timeout, $job, $e);
-
             }
 
             return $this->pheanstalk->delete($job);

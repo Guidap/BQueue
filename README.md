@@ -68,12 +68,10 @@ Here the dispatcher:
 ```sh
 $this->get('bqueuebundle.job_manager')
             ->dispatch(
-                [
-                    // service is your worker service delaraction ID 
-                    'service' => 'my_bundle.exemple_worker',
+            // service is your worker service delaraction ID
+            'my_bundle.exemple_worker'
                     // parameters must be an array, you can pass some value in this one
-                    'parameters' => ['my_key' => 'my_value']
-                ]
+                [ 'parameters' => ['my_key' => 'my_value']]
             );
 ```
 
