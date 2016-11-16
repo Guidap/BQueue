@@ -2,7 +2,6 @@
 
 namespace Strnoar\BQueueBundle\Jobs;
 
-use Pheanstalk\Pheanstalk;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -38,7 +37,7 @@ class JobManager extends Manager
      * @param null $tube
      * @return int
      */
-    public function dispatch($service, Array $payload, $tube = null)
+    public function dispatch($service, array $payload, $tube = null)
     {
         if ($this->isBeanstald) {
             $serialized = serialize(['service' => $service, 'parameters' => $payload]);
@@ -76,7 +75,7 @@ class JobManager extends Manager
                     [$this->container->get($payload['service']), 'handle'],
                     $payload['parameters']
                 );
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 return $this->tries($tube, $tries, $index, $timeout, $job, $e);
             }
 

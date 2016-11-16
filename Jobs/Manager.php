@@ -2,6 +2,8 @@
 
 namespace Strnoar\BQueueBundle\Jobs;
 
+use Pheanstalk\Pheanstalk;
+
 abstract class Manager
 {
     /**
@@ -22,7 +24,7 @@ abstract class Manager
      * @return bool
      * @throws \Exception
      */
-    protected function validate(Array $payload)
+    protected function validate(array $payload)
     {
         if (!array_key_exists('service', $payload) && !is_array($payload)) {
             return false;
