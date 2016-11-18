@@ -89,7 +89,7 @@ class JobManager extends Manager
      * @param $service
      * @param array $payload
      */
-    protected function sync($service, array $payload)
+    private function sync($service, array $payload)
     {
         if ($this->container->has($service)) {
             call_user_func(
