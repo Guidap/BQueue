@@ -66,7 +66,7 @@ class JobManager extends Manager
         }
 
         $tube = is_null($tube) ? $this->parameters['default'] : $tube;
-        $job = $this->pheanstalk->watchOnly($tube)->reserve($timeout);
+        $job = $this->pheanstalk->watchOnly($tube)->reserve();
 
         if (false === $job) {
             return;
