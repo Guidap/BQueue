@@ -56,11 +56,15 @@ class JobManager extends Manager
      * @param int $tries
      * @param int $index
      * @param int $timeout
-     * @return $this|string|void
+     * @return bool|null|void
      * @throws \Exception
      */
     public function execute($tube = null, $tries = 1, $index = 0, $timeout = 0)
     {
+        if (!$this->isBeanstald) {
+            return;
+        }
+
         $tube = is_null($tube) ? $this->parameters['default'] : $tube;
         $job = $this->pheanstalk->watchOnly($tube)->reserve($timeout);
 
