@@ -35,11 +35,12 @@ class JobManager extends Manager
      * @param $service
      * @param array $payload
      * @param null $tube
+     * @param bool $sync
      * @return int
      */
-    public function dispatch($service, array $payload, $tube = null)
+    public function dispatch($service, array $payload, $tube = null, $sync = false)
     {
-        if ($this->isBeanstald) {
+        if ($this->isBeanstald && !$sync) {
             $serialized = serialize(['service' => $service, 'parameters' => $payload]);
             $tube = is_null($tube) ? $this->parameters['default'] : $tube;
 
