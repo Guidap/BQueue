@@ -41,16 +41,29 @@ class QueueListenCommand extends ContainerAwareCommand
                 InputOption::VALUE_OPTIONAL,
                 'How many try',
                 1
+            )
+            ->addOption(
+                'infinite_retry',
+                'i',
+                InputOption::VALUE_NONE
             );
     }
 
     protected function execute(InputInterface $input, OutputInterface $putput)
     {
-        $tube = is_null($input->getOption('tube')) ? $this->parameters['default'] :  $input->getOption('tube');
-        $tries = is_null($input->getOption('tries')) ? $this->parameters['tries'] :  $input->getOption('tries');
+        $tube = $input->getOption('tube');
+        $tube = null === $tube ? $this->parameters['default'] : $tube;
 
-        $jobManager = $this->getContainer()->get('bqueuebundle.job_manager');
+        if (true === $input->getOption('infinite_retry')) {
+            $tries = -1;
+        } else {
+            $tries = $input->getOption('tries');
+            $tries = null === $tries ? (int) $this->parameters['tries'] : (int) $tries;
+        }
 
-        $jobManager->execute($tube, $tries);
+        $jobManager = $this
+            ->getContainer()
+            ->get('bqueuebundle.job_manager')
+            ->execute($tube, $tries);
     }
 }

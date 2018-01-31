@@ -25,7 +25,8 @@ class Configuration implements ConfigurationInterface
                     ->integerNode('port')->defaultValue(11300)->end()
                     ->scalarNode('default')->defaultValue('default')->end()
                     ->enumNode('adapter')->values(['sync', 'beanstalkd'])->defaultValue('sync')->end()
-                    ->integerNode('tries')->defaultValue(1)->end();
+                    ->integerNode('tries')->defaultValue(1)->end()
+                    ->integerNode('infinite_retry_delay')->defaultValue(60 * 5)->end();
 
         // Here you should define the parameters that are allowed to
         // configure your bundle. See the documentation linked above for
