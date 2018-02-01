@@ -2,6 +2,7 @@
 
 namespace Strnoar\BQueueBundle\Jobs;
 
+use Pheanstalk\PheanstalkInterface;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -41,7 +42,7 @@ class JobManager extends Manager
     {
         if ($this->isBeanstald) {
             $serialized = serialize(['service' => $service, 'parameters' => $payload]);
-            $tube = is_null($tube) ? $this->parameters['default'] : $tube;
+            $tube = null === $tube ? $this->parameters['default'] : $tube;
 
             return $this->pheanstalk->useTube($tube)->put($serialized);
         }
@@ -60,7 +61,7 @@ class JobManager extends Manager
      */
     public function execute($tube = null, $tries = 1, $index = 0, $timeout = 0)
     {
-        $tube = is_null($tube) ? $this->parameters['default'] : $tube;
+        $tube = null === $tube ? $this->parameters['default'] : $tube;
         $job = $this->pheanstalk->watch($tube)->reserve($timeout);
 
         if (false === $job) {
@@ -69,20 +70,29 @@ class JobManager extends Manager
 
         $payload = unserialize($job->getData());
 
-        if ($this->validate($payload)) {
-            try {
-                call_user_func(
-                    [$this->container->get($payload['service']), 'handle'],
-                    $payload['parameters']
-                );
-            } catch (\Exception $e) {
-                return $this->tries($tube, $tries, $index, $timeout, $job, $e);
-            }
-
-            return $this->pheanstalk->delete($job);
+        if (!$this->validate($payload)) {
+            throw new \Exception('The payload value is not valid, please verify the service and the parameters');
         }
 
-        throw new \Exception('The payload value is not valid, please verify the service and the parameters');
+        try {
+            call_user_func(
+                [$this->container->get($payload['service']), 'handle'],
+                $payload['parameters']
+            );
+        } catch (\Exception $e) {
+            if ($tries === -1) {
+                $this->logger->alert('JOB ERROR: release', [
+                    'exception' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]);
+                $this->pheanstalk->release($job, PheanstalkInterface::DEFAULT_PRIORITY, $this->parameters['infinite_retry_delay']);
+                return;
+            }
+            return $this->tries($tube, $tries, $index, $timeout, $job, $e);
+        }
+
+        return $this->pheanstalk->delete($job);
     }
 
     /**
