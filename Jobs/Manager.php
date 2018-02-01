@@ -53,7 +53,11 @@ abstract class Manager
 
         $this->pheanstalk->delete($job);
 
-        return $this->logger->alert($e->getMessage());
+        return $this->logger->alert('JOB ERROR: delete', [
+            'exception' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ]);
     }
 
     protected function init()

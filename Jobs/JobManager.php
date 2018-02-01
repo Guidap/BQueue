@@ -81,6 +81,11 @@ class JobManager extends Manager
             );
         } catch (\Exception $e) {
             if ($tries === -1) {
+                $this->logger->alert('JOB ERROR: release', [
+                    'exception' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]);
                 $this->pheanstalk->release($job, PheanstalkInterface::DEFAULT_PRIORITY, $this->parameters['infinite_retry_delay']);
                 return;
             }
