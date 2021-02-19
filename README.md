@@ -1,5 +1,5 @@
 
-# BQueue Bundle
+# BQueue Bundle by [@ArnaudTarroux](https://github.com/ArnaudTarroux/)
 
 BQueue is a Beanstalkd ready queue system for Symfony >= 2.8. Install, configure and use it !
 
