@@ -6,8 +6,7 @@
     "homepage": "http://github.com/ArnaudTarroux",
     "require": {
         "symfony/symfony": ">=2.8",
-        "pda/pheanstalk": "^3.1",
-        "doctrine/doctrine-bundle": "*"
+        "pda/pheanstalk": "^3.1"
     },
     "minimum-stability": "dev",
     "autoload": {
