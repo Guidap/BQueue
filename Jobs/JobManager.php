@@ -79,7 +79,7 @@ class JobManager extends Manager
                 [$this->container->get($payload['service']), 'handle'],
                 $payload['parameters']
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($tries === -1) {
                 $this->logger->alert('JOB ERROR: release', [
                     'exception' => $e->getMessage(),
