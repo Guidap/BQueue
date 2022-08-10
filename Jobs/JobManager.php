@@ -85,6 +85,7 @@ class JobManager extends Manager
                     'exception' => $e->getMessage(),
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),
+                    'payload' => $payload['parameters'] ?? null,
                 ]);
                 $this->pheanstalk->release($job, PheanstalkInterface::DEFAULT_PRIORITY, $this->parameters['infinite_retry_delay']);
                 return;
