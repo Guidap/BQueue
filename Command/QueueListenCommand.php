@@ -33,7 +33,7 @@ class QueueListenCommand extends ContainerAwareCommand
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'Which tube listen',
-                $this->parameters['default']
+                is_array($this->parameters) ? $this->parameters['default'] : null
             )
             ->addOption(
                 'tries',
