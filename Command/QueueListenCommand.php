@@ -25,10 +25,6 @@ class QueueListenCommand extends ContainerAwareCommand
 
     protected function configure()
     {
-        $defaultTube = is_array($this->parameters) && isset($this->parameters['default'])
-            ? $this->parameters['default']
-            : 'default_value';
-
         $this
             ->setName('worker:listen')
             ->setDescription('Listen a worker')
@@ -37,7 +33,7 @@ class QueueListenCommand extends ContainerAwareCommand
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'Which tube listen',
-                $defaultTube
+                is_array($this->parameters) ? $this->parameters['default'] : null
             )
             ->addOption(
                 'tries',
